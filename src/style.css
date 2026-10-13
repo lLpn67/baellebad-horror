@@ -1,0 +1,395 @@
+:root {
+  --rot: #e3263a;
+  --gruen: #3bdc6a;
+  --papier: #efe7d6;
+  --dunkel: #050407;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--dunkel);
+  color: var(--papier);
+  font-family: Oswald, system-ui, sans-serif;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  overscroll-behavior: none;
+}
+
+#szene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  color: var(--papier);
+  background: #1c1820;
+  border: 1px solid #3a3340;
+  border-radius: 6px;
+  padding: 10px 18px;
+}
+button:hover { background: #2a2430; }
+button.gross {
+  font-family: Anton, Oswald, sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  padding: 12px 40px;
+  background: var(--rot);
+  border-color: #ff5566;
+  color: #fff;
+}
+button.gross:hover { background: #ff3a4f; }
+
+/* ---------------------------------------------------------------
+   Blätter: Titel, Pause, Ende
+   --------------------------------------------------------------- */
+
+.blatt {
+  position: fixed;
+  inset: 0;
+  display: none;
+  padding: 16px;
+  background: radial-gradient(ellipse at center, rgba(10, 6, 14, 0.55), rgba(0, 0, 0, 0.92));
+  z-index: 20;
+  overflow-y: auto;
+}
+body[data-phase="titel"] #titel,
+body[data-phase="pause"] #pause,
+body[data-phase="ende"] #ende { display: flex; }
+
+.karte {
+  max-width: 520px;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.karte .oben {
+  font-family: Anton, sans-serif;
+  font-size: 19px;
+  line-height: 1.25;
+  color: #fff;
+  text-shadow: 0 2px 0 #000, 0 0 10px #000;
+  margin: 0;
+}
+
+h1 {
+  font-family: Anton, sans-serif;
+  font-weight: 400;
+  font-size: clamp(64px, 18vw, 120px);
+  line-height: 0.9;
+  margin: 4px 0;
+  letter-spacing: 3px;
+  background: linear-gradient(180deg, #ffdf3a 0%, #ff8a1f 30%, #e3263a 60%, #1d6fe0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 0 #000) drop-shadow(0 0 22px rgba(227, 38, 58, 0.35));
+}
+
+h2 {
+  font-family: Anton, sans-serif;
+  font-weight: 400;
+  font-size: 54px;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.story { font-size: 16px; line-height: 1.5; color: #cfc6b4; margin: 0; }
+.story b { color: #fff; }
+.story em { color: #ffdf3a; font-style: normal; }
+
+.steuerung { font-size: 13px; color: #8f8796; }
+.steuerung .mobil { display: none; }
+@media (pointer: coarse) {
+  .steuerung .mobil { display: inline; }
+  .steuerung .desktop { display: none; }
+}
+
+@media (max-height: 520px) {
+  h1 { font-size: 64px; }
+  .story { font-size: 14px; }
+  .karte { gap: 10px; }
+}
+
+.klein { font-size: 12px; color: #6f6876; margin: 0; }
+
+.zitat {
+  font-family: Anton, sans-serif;
+  font-size: 22px;
+  color: #fff;
+  margin: 0;
+}
+#ende-werte { color: #a59cad; margin: 0; }
+body[data-ausgang="tot"] #ende-titel { color: var(--rot); }
+body[data-ausgang="sieg"] #ende-titel { color: var(--gruen); }
+
+/* ---------------------------------------------------------------
+   HUD
+   --------------------------------------------------------------- */
+
+#hud, #touch, #untertitel { display: none; }
+body[data-phase="spiel"] #hud,
+body[data-phase="spiel"] #untertitel,
+body[data-phase="schreck"] #untertitel { display: block; }
+
+#tage {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  left: max(14px, env(safe-area-inset-left));
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+#tage .tag {
+  width: 40px;
+  height: 46px;
+  border-radius: 4px;
+  background: rgba(239, 231, 214, 0.08);
+  border: 1px solid rgba(239, 231, 214, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+  font-family: Anton, sans-serif;
+  font-size: 16px;
+  color: rgba(239, 231, 214, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+#tage .tag::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 11px;
+  background: rgba(227, 38, 58, 0.25);
+}
+#tage .tag.da {
+  background: var(--papier);
+  color: #111;
+  border-color: var(--papier);
+}
+#tage .tag.da::before { background: var(--rot); }
+
+#lampe-anzeige {
+  position: fixed;
+  top: max(70px, calc(env(safe-area-inset-top) + 56px));
+  left: max(14px, env(safe-area-inset-left));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #8f8796;
+  z-index: 10;
+}
+#lampe-anzeige i {
+  width: 70px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+#lampe-anzeige b {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: #ffe9a8;
+}
+#lampe-anzeige.aus span { text-decoration: line-through; }
+#lampe-anzeige.leer b { background: var(--rot); }
+
+#ausdauer {
+  position: fixed;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: opacity 0.4s;
+  z-index: 10;
+}
+#ausdauer i { display: block; height: 100%; width: 100%; background: #d9d2c4; }
+#ausdauer.voll { opacity: 0; }
+
+#fadenkreuz {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  z-index: 10;
+}
+
+#hinweis {
+  position: fixed;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90vw, 560px);
+  text-align: center;
+  font-size: 18px;
+  color: #fff;
+  text-shadow: 0 2px 6px #000, 0 0 2px #000;
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 10;
+  pointer-events: none;
+}
+#hinweis.zeigen { opacity: 1; }
+
+#pause-knopf {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-family: Anton, sans-serif;
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.15);
+  z-index: 12;
+}
+
+/* TikTok-artige Untertitel: ein Wort, groß, mittig unten. */
+#untertitel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 24%;
+  text-align: center;
+  font-family: Anton, Oswald, sans-serif;
+  font-size: clamp(30px, 7vw, 52px);
+  color: #fff;
+  -webkit-text-stroke: 2px #000;
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 #000, 0 0 14px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  z-index: 15;
+  opacity: var(--laut, 1);
+}
+
+/* ---------------------------------------------------------------
+   Überlagerungen
+   --------------------------------------------------------------- */
+
+#gefahr {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(90, 0, 10, 0.85) 100%);
+  opacity: 0;
+  z-index: 5;
+}
+#rauschen {
+  position: fixed;
+  inset: -50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 6;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: rauschen 0.25s steps(3) infinite;
+}
+@keyframes rauschen {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-7%, 4%); }
+  66% { transform: translate(5%, -6%); }
+}
+
+/* Versteckt im Bällebad: Bälle drängen sich um den Rand der Sicht. */
+#baelle-sicht {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s;
+  z-index: 4;
+  background-size: cover;
+  background-position: center;
+}
+body.versteckt #baelle-sicht { opacity: 1; }
+
+/* ---------------------------------------------------------------
+   Touch
+   --------------------------------------------------------------- */
+
+body.touch[data-phase="spiel"] #touch { display: block; }
+body.touch #fadenkreuz { display: none; }
+
+#stick-zone {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 45%;
+  height: 60%;
+  z-index: 8;
+}
+#stick {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  margin: -60px 0 0 -60px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  left: 90px;
+  top: calc(100% - 120px);
+  opacity: 0.6;
+}
+#stick i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  height: 50px;
+  margin: -25px 0 0 -25px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+}
+#blick-zone {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 55%;
+  height: 100%;
+  z-index: 7;
+}
+#touch-knoepfe {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 74px 74px;
+  gap: 10px;
+  z-index: 9;
+}
+#touch-knoepfe button {
+  height: 58px;
+  padding: 0;
+  font-size: 14px;
+  background: rgba(20, 16, 24, 0.55);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+#touch-knoepfe button.an { background: rgba(227, 38, 58, 0.55); border-color: #ff5566; }
+#tuer-knopf { visibility: hidden; }
+#tuer-knopf.da { visibility: visible; background: rgba(59, 220, 106, 0.35); }

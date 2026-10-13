@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Bällebad</title>
+<meta name="description" content="Horror-Game im Browser: ein dunkles Bällebad, vier Kalenderblätter und ein Monster, das in Originaltönen spricht. Satire.">
+<meta name="theme-color" content="#050407">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2227%22 font-size=%2228%22>🔴</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="src/style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="szene"></canvas>
+
+<!-- Alles über der Szene. Sichtbar ist immer nur, was zur Phase passt:
+     body[data-phase] steuert das in style.css. -->
+<div id="baelle-sicht" aria-hidden="true"></div>
+<div id="gefahr" aria-hidden="true"></div>
+<div id="rauschen" aria-hidden="true"></div>
+
+<div id="hud">
+  <div id="tage" aria-label="Gesammelte Tage"></div>
+  <div id="lampe-anzeige"><span>Lampe</span><i><b></b></i></div>
+  <div id="ausdauer"><i></i></div>
+  <div id="fadenkreuz"></div>
+  <div id="hinweis" role="status"></div>
+  <button id="pause-knopf" aria-label="Pause">II</button>
+</div>
+
+<div id="untertitel" aria-live="polite"></div>
+
+<div id="touch">
+  <div id="stick-zone"><div id="stick"><i></i></div></div>
+  <div id="blick-zone"></div>
+  <div id="touch-knoepfe">
+    <button data-k="rennen">Rennen</button>
+    <button data-k="ducken">Ducken</button>
+    <button data-k="lampe">Lampe</button>
+    <button data-k="tuer" id="tuer-knopf">Tür</button>
+  </div>
+</div>
+
+<section id="titel" class="blatt">
+  <div class="karte">
+    <p class="oben">Das Monster in unserem Horror-Game ist besonders furchteinflößend…</p>
+    <h1>BÄLLEBAD</h1>
+    <p class="story">
+      Spielparadies <em>Sonnenschein</em>, kurz nach Ladenschluss. Irgendwo
+      in der Dunkelheit liegen vier Kalenderblätter: <b>Montag bis Donnerstag</b>.
+      Sammle die Vier-Tage-Woche ein und schaff es zum Notausgang.
+      <br><br>
+      Er hört dich, wenn du rennst. Er sieht deine Lampe. Im Bällebad kannst
+      du dich ducken und verstecken.
+    </p>
+    <button id="start" class="gross">Spielen</button>
+    <div class="steuerung">
+      <span class="desktop">WASD gehen · Maus schauen · Shift rennen · C ducken · F Lampe · E Tür · Esc Pause</span>
+      <span class="mobil">Links ziehen: gehen · Rechts wischen: schauen · Knöpfe rechts</span>
+    </div>
+    <p class="klein">🎧 Mit Kopfhörern spielen. Satire. Die Stimme sind Originaltöne.</p>
+    <p id="ladezustand" class="klein"></p>
+  </div>
+</section>
+
+<section id="pause" class="blatt">
+  <div class="karte">
+    <h2>Pause</h2>
+    <button id="weiter" class="gross">Weiter</button>
+    <button id="zum-titel">Aufgeben</button>
+  </div>
+</section>
+
+<section id="ende" class="blatt">
+  <div class="karte">
+    <h2 id="ende-titel"></h2>
+    <p id="ende-zitat" class="zitat"></p>
+    <p id="ende-werte"></p>
+    <button id="nochmal" class="gross">Nochmal</button>
+  </div>
+</section>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
