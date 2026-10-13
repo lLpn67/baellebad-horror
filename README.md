@@ -61,3 +61,14 @@ Beispiel Vercel oder GitHub Pages.
 
 Die Karte steht als Zeichenraster in `src/config.js` und lässt sich direkt dort
 umbauen. Die Legende steht darüber.
+
+## Online spielen über GitHub Pages
+
+Einmalig in GitHub: **Settings → Pages → Build and deployment**, Quelle
+*Deploy from a branch*, Branch `main`, Ordner `/ (root)`, speichern. Nach ein
+bis zwei Minuten läuft das Spiel unter
+
+https://llpn67.github.io/baellebad-horror/
+
+Pages gibt es nur für öffentliche Repos oder mit GitHub Pro. Die leere Datei
+`.nojekyll` sorgt dafür, dass GitHub die Dateien unverändert ausliefert.
